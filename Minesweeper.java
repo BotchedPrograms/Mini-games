@@ -286,7 +286,7 @@ public class Minesweeper {
             time1 = System.currentTimeMillis();
   
   
-            // If not flagged, spreads revealing
+          // Lose screen
           } else if (!flagged[x][y] && contains(mines, x*columns + y)) {
             StringBuilder screen = new StringBuilder();
             time2 = System.currentTimeMillis();
@@ -342,6 +342,7 @@ public class Minesweeper {
             win = false;
             break;
           }
+          // If not flagged, spreads revealing
           spread(revealed, mines, mineNumbers, flagged, x, y);
         }
 
