@@ -277,74 +277,75 @@ public class Minesweeper {
           } else if (!revealed[x][y]) {
             flagged[x][y] = true;
           }
-        } else if (start) {
-          // Places bombs, removes current flags, and reveals spots when game starts
-          placeBombs(availableSpots, mines, mineNumbers, x, y);
-          flagged = new boolean[rows][columns];
-          spread(revealed, mines, mineNumbers, flagged, x, y);
-          start = false;
-          time1 = System.currentTimeMillis();
-
-
-          // If not flagged, spreads revealing
-        } else if (!flagged[x][y] && contains(mines, x*columns + y)) {
-          StringBuilder screen = new StringBuilder();
-          time2 = System.currentTimeMillis();
-          System.out.println(numFlags + " flags" + "     " + toNormalTime(time2 - time1));
-          for (int i = 1; i < columns-1; i++) {
-            if (i % 5 == 0) {
-              screen.append(" \'");
-            } else {
-              screen.append("  ");
-            }
-          }
-          screen.append("\n");
-          for (int i = 1; i < rows-1; i++) {
-            if ((rows - i - 1) % 5 == 0) {
-              screen.append("-");
-            } else {
-              screen.append(" ");
-            }
-            for (int j = 1; j < columns-1; j++) {
-              if (contains(mines, i*columns+j)) {
-                screen.append("\u25a1 ");
-              } else if (revealed[i][j]) {
-                if (mineNumbers[i][j] == 0) {
-                  screen.append(". ");
-                } else {
-                  screen.append(mineNumbers[i][j] + " ");
-                }
+        } else {
+          if (start) {
+            // Places bombs, removes current flags, and reveals spots when game starts
+            placeBombs(availableSpots, mines, mineNumbers, x, y);
+            flagged = new boolean[rows][columns];
+            start = false;
+            time1 = System.currentTimeMillis();
+  
+  
+            // If not flagged, spreads revealing
+          } else if (!flagged[x][y] && contains(mines, x*columns + y)) {
+            StringBuilder screen = new StringBuilder();
+            time2 = System.currentTimeMillis();
+            System.out.println(numFlags + " flags" + "     " + toNormalTime(time2 - time1));
+            for (int i = 1; i < columns-1; i++) {
+              if (i % 5 == 0) {
+                screen.append(" \'");
               } else {
-                if (flagged[i][j]) {
-                  screen.append("* ");
-                  // screen.append("\u2691 ");   Flag character
-                } else {
-                  screen.append("\u25a0 ");
-                }
+                screen.append("  ");
               }
             }
-            if ((rows - i - 1) % 5 == 0) {
-              screen.append("-");
-            } else {
-              screen.append(" ");
-            }
             screen.append("\n");
-          }
-          for (int i = 1; i < columns-1; i++) {
-            if (i % 5 == 0) {
-              screen.append(" \'");
-            } else {
-              screen.append("  ");
+            for (int i = 1; i < rows-1; i++) {
+              if ((rows - i - 1) % 5 == 0) {
+                screen.append("-");
+              } else {
+                screen.append(" ");
+              }
+              for (int j = 1; j < columns-1; j++) {
+                if (contains(mines, i*columns+j)) {
+                  screen.append("\u25a1 ");
+                } else if (revealed[i][j]) {
+                  if (mineNumbers[i][j] == 0) {
+                    screen.append(". ");
+                  } else {
+                    screen.append(mineNumbers[i][j] + " ");
+                  }
+                } else {
+                  if (flagged[i][j]) {
+                    screen.append("* ");
+                    // screen.append("\u2691 ");   Flag character
+                  } else {
+                    screen.append("\u25a0 ");
+                  }
+                }
+              }
+              if ((rows - i - 1) % 5 == 0) {
+                screen.append("-");
+              } else {
+                screen.append(" ");
+              }
+              screen.append("\n");
             }
+            for (int i = 1; i < columns-1; i++) {
+              if (i % 5 == 0) {
+                screen.append(" \'");
+              } else {
+                screen.append("  ");
+              }
+            }
+            System.out.println(screen);
+            System.out.println("You lose");
+            win = false;
+            break;
           }
-          System.out.println(screen);
-          System.out.println("You lose");
-          win = false;
-          break;
+          spread(revealed, mines, mineNumbers, flagged, x, y);
         }
 
-
-        spread(revealed, mines, mineNumbers, flagged, x, y);
+        
         numFlags = numOfMines;
         numRevealed = 0;
         for (int i = 1; i < rows - 1; i++) {
