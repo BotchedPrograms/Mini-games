@@ -1,6 +1,6 @@
 // Finds determinant of square matrix
 class FindDeterminant {
-  // Worked try yoooooooooooooooooo; that's like actually unheard of
+  // Worked first try yoooooooooooooooooo; that's like actually unheard of
   public static int determinant(int[][] arr) {
     if (arr.length == 1) {
       return arr[0][0];
