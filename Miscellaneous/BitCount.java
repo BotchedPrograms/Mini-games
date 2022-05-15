@@ -2,9 +2,6 @@ import java.util.Scanner;
 
 // Gives the number of 1s in binary forms of 1 to number to another inclusive
   // 5 and 7 would give x because 101, 110, and 111 have 7 1s
-// Might not look like much but math behind this makes this one of the hardest things I've programmed
-  // Tried to explain but gave up halfway through
-  // More so b/c I've made things unnecessarily complex though
 public class BitCount {
   // Gives binary number; or at least it did before I modified it
   public static String toBinary(long num) {
@@ -45,6 +42,9 @@ public class BitCount {
     }
   }
 }
+// Might not look like much but math behind this makes this one of the hardest things I've programmed
+  // Tried to explain but gave up halfway through
+  // More so b/c I've made things unnecessarily complex though
 
 /* Sum of 1s from (2^(n-1), 2^n]   (or [2^(n-1), 2^n) b/c they're both 1)
  = sum of 1s from (1, 2^(n-1)] + the number of numbers there
