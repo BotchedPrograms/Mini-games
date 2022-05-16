@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 // Random path generator from a long time ago
-// Needs stdlib to use
+// Needs stdlib to use, got mine for princeton comp sci course
 public class RandomWalker{
 	public static String randomMove(boolean[][] passed, int x, int y, int length) {
 		int legals = 0;
