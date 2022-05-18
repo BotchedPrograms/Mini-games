@@ -171,9 +171,7 @@ public class PolynomialSolution {
         }
     }
 
-    // Gives all the indices of the numbers that aren't 0
-        // Avoids y = x^3 + 0x^2 + 3x
-        // In hindsight, I think this is actually unnecessary; I'll try removing this later
+    // Avoids 3x^2 + 5x + 0 becoming 3x^2 + 5x +
     public static ArrayList<Integer> nonZeroIndices(long[] numbers) {
         ArrayList<Integer> indices = new ArrayList<Integer>();
         for (int i = 0; i < numbers.length; i++) {
@@ -184,7 +182,7 @@ public class PolynomialSolution {
         return indices;
     }
 
-    // Gets max absolute value of numbers
+    // Gets max of absolute value of numbers
     public static long maxAbs(long[] numbers) {
         long maxAbs = Math.abs(numbers[0]);
         for (int i = 1; i < numbers.length; i++) {
@@ -218,10 +216,11 @@ public class PolynomialSolution {
 }
 
 // Where did this come from: Me
-    // Someone else probably discovered this earlier though; I wouldn't know
-// How this works: I don't fricking know -- I don't even know what I'm talking about
-    // Might be provable by calc though, considering 'ultimateDerivative' is just derivative of derivatives
-    // Also, polynomial and factorial business is reminiscent of Taylor series
+    // Someone else likely discovered this earlier though; I wouldn't know
+// How this works: x^n derived = n*x^(n-1)
+    // Repeating until exponent = 0, it becomes n!
+    // Some polynomial a*x^n + bx^(n-1) ultimately derivates into a*n!
+    // a is found, a*x^n is removed from starting numbers, and process repeated to find rest of polynomial
 // When is this useful: Never really, it's just kinda cool
     // Most numbers irl are like linear or exponential but not polynomials of order 3-5 which this would actually be useful for
     // Held back by x having to be 0, 1, 2...
