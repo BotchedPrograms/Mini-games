@@ -122,6 +122,9 @@ public class PolynomialSolution {
 
     // Don't look at this, this is embarrassing
     public static void printPolynomial(long[] numbers) {
+        // StringBuilder used to print polynomial all at once
+            // Also, it's more efficient at appending Strings
+        StringBuilder polynomial = new StringBuilder();
         long[] coefficients = getCoefficients(numbers);
         long gcf = gcf(coefficients);
         long denominator = factorial((int) ultimateDerivative(numbers)[1]);
@@ -132,43 +135,46 @@ public class PolynomialSolution {
             }
         }
         ArrayList<Integer> indices = nonZeroIndices(coefficients);
-        System.out.print("y = ");
+        polynomial.append("y = ");
         if (indices.isEmpty()) {
-            System.out.print("0");
+            polynomial.append("0");
             return;
         }
         if (denominator != 1) {
-            System.out.print("(");
+            polynomial.append("(");
         }
         for (int i = indices.size() - 1; i >= 0; i--) {
             if (indices.get(i) == 0) {
-                System.out.print(coefficients[indices.get(i)]);
+                polynomial.append(coefficients[indices.get(i)]);
             } else {
                 if (coefficients[indices.get(i)] != 1) {
                     if (coefficients[indices.get(i)] == -1) {
-                        System.out.print("-");
+                        polynomial.append("-");
                     } else {
-                        System.out.print(coefficients[indices.get(i)]);
+                        polynomial.append(coefficients[indices.get(i)]);
                     }
                 }
             }
             if (indices.get(i) == 1) {
-                System.out.print("x");
+                polynomial.append("x");
             } else if (indices.get(i) != 0) {
-                System.out.print("x^" + indices.get(i));
+                polynomial.append("x^");
+                polynomial.append(indices.get(i));
             }
             if (i != 0) {
                 if (coefficients[indices.get(i-1)] < 0) {
                     coefficients[indices.get(i-1)] *= -1;
-                    System.out.print(" - ");
+                    polynomial.append(" - ");
                 } else {
-                    System.out.print(" + ");
+                    polynomial.append(" + ");
                 }
             }
         }
         if (denominator != 1) {
-            System.out.print(") / " + denominator);
+            polynomial.append(") / ");
+            polynomial.append(denominator);
         }
+        System.out.println(polynomial);
     }
 
     // Avoids 3x^2 + 5x + 0 becoming 3x^2 + 5x +
