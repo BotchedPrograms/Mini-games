@@ -116,6 +116,9 @@ public class PolynomialSolution {
                     newNumbers[j] = newNumbers2[j] - coefficients[steps] * (int) Math.pow(j, steps);
                 }
             }
+            if (steps == 0) {
+                break;
+            }
         }
         return coefficients;
     }
