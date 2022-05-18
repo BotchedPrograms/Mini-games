@@ -34,6 +34,7 @@ public class PolynomialSolution {
     public static long[] ultimateDerivative(long[] numbers) {
         ArrayList<Long> numbers1 = new ArrayList<Long>();
         ArrayList<Long> numbers2 = new ArrayList<Long>();
+        // Number 1 is the actual value, number 2 is how many steps it took
         long[] answer = new long[2];
         for (int i = 0; i < numbers.length; i++) {
             numbers1.add(numbers[i]);
@@ -60,14 +61,7 @@ public class PolynomialSolution {
         return answer;
     }
 
-    public static ArrayList<Long> differences(long[] numbers) {
-        ArrayList<Long> numbers1 = new ArrayList<Long>();
-        for (int i = 1; i < numbers.length; i++) {
-            numbers1.add(numbers[i] - numbers[i - 1]);
-        }
-        return numbers1;
-    }
-
+    // Gets differences between consecutives numbers
     public static ArrayList<Long> differences(ArrayList<Long> numbers) {
         ArrayList<Long> numbers1 = new ArrayList<Long>();
         for (int i = 1; i < numbers.size(); i++) {
@@ -94,6 +88,7 @@ public class PolynomialSolution {
         return n*factorial(n - 1);
     }
 
+    // Gets coefficients of polynomial
     public static long[] getCoefficients(long[] numbers) {
         long[] newNumbers = new long[numbers.length];
         long[] newNumbers2 = new long[numbers.length];
@@ -176,6 +171,9 @@ public class PolynomialSolution {
         }
     }
 
+    // Gives all the indices of the numbers that aren't 0
+        // Avoids y = x^3 + 0x^2 + 3x
+        // In hindsight, I think this is actually unnecessary; I'll try removing this later
     public static ArrayList<Integer> nonZeroIndices(long[] numbers) {
         ArrayList<Integer> indices = new ArrayList<Integer>();
         for (int i = 0; i < numbers.length; i++) {
@@ -186,6 +184,7 @@ public class PolynomialSolution {
         return indices;
     }
 
+    // Gets max absolute value of numbers
     public static long maxAbs(long[] numbers) {
         long maxAbs = Math.abs(numbers[0]);
         for (int i = 1; i < numbers.length; i++) {
@@ -196,6 +195,7 @@ public class PolynomialSolution {
         return maxAbs;
     }
 
+    // Prints numbers in array
     public static void print(int[] numbers) {
         for (int i = 0; i < numbers.length; i++) {
             System.out.print(numbers[i] + " ");
@@ -203,6 +203,7 @@ public class PolynomialSolution {
         System.out.println();
     }
 
+    // Prints numbers in arraylist
     public static void print(ArrayList<Integer> numbers) {
         for (int i = 0; i < numbers.size(); i++) {
             System.out.print(numbers.get(i) + " ");
