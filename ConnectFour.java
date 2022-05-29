@@ -16,7 +16,7 @@ public class ConnectFour {
     if (win) {
       return (turns + redStart) % 2 == 1 ? "Red" : "Yellow";
     }
-    if (turns == 41) {
+    if (turns == 42) {
       return "Draw";
     }
     return "none";
@@ -78,7 +78,7 @@ public class ConnectFour {
   // Prints board
   public static void printBoard(boolean win) {
     StringBuilder board = new StringBuilder();
-    if (!win) {
+    if (!(win || turns == 42)) {
       // Notably % 2 == 1 instead if 0 like everywhere else
         // It's b/c when red places a piece, it should say it's yellow's turn and vice versa
       board.append((turns + redStart) % 2 == 0 ? "Red" : "Yellow");
