@@ -1,19 +1,20 @@
 import java.util.Scanner;
 
 // Connect Four
-  // Explaining is overrated; i'ma nap
 public class ConnectFour {
   public static int[][] grid;
   public static int redStart;
+  public static int turns;
 
   // Plays match
-  public static String playGame(String move, int turns) {
-    String column = move.substring(0, 1);
-    putPiece(grid, column, turns, true);
+  public static String playTurn(int move) {
+    if (putPiece(grid, move, true)) {
+      turns++;
+    }
     boolean win = win(grid);
-    printBoard(turns, win);
+    printBoard(win);
     if (win) {
-      return (turns + redStart) % 2 == 0 ? "Red" : "Yellow";
+      return (turns + redStart) % 2 == 1 ? "Red" : "Yellow";
     }
     if (turns == 41) {
       return "Draw";
@@ -22,22 +23,22 @@ public class ConnectFour {
   }
 
   // Puts piece down
-  public static boolean putPiece(int[][] grid, String column, int turns, boolean place) {
-    String columns = "abc1234567";
-    int col = columns.indexOf(column);
+  public static boolean putPiece(int[][] grid, int column, boolean place) {
+    column += 2;
+    boolean putPiece = false;
     int i;
     for (i = 8; i > 2; i--) {
-      if (grid[i][col] == 0) {
+      if (grid[i][column] == 0) {
         break;
       }
     }
+    if (grid[3][column] == 0) {
+      putPiece = true;
+    }
     if (place) {
-      grid[i][col] = (turns + redStart) % 2 == 0 ? 1 : 2;
+      grid[i][column] = (turns + redStart) % 2 == 0 ? 1 : 2;
     }
-    if (grid[i][col] != 0) {
-      return true;
-    }
-    return false;
+    return putPiece;
   }
 
   // Checks if anyone has won the game yet
@@ -45,10 +46,19 @@ public class ConnectFour {
     // Classic quintuple loop
     for (int i = 8; i > 2; i--) {
       for (int j = 3; j < 10; j++) {
+        // Board is 12 by 13 aka 6 by 7 main board with 3-tile border
+          // Advantage is that one can condense the check to a few for loops
+          // Instead of double-digit if statements to avoid out-of-bounds-exceptions
+        // Two loops above go through every tile in main board
+        // If statement below prevents saying there's a win b/c there's 4 consecutive blank tiles
         if (grid[i][j] != 0) {
           for (int k = -1; k < 2; k++) {
             l4: for (int l = -1; l < 2; l++) {
+              // Two loops above both go through each 8 adjacent neighbors
+              // If statement below ensures checking neighbors and not itself
               if (!(k == 0 && l == 0)) {
+                // Stuff below checks if the 4 tiles in certain direction are the same
+                  // Restarts previous loop if not, returns true if so
                 for (int m = 0; m < 3; m++) {
                   if (grid[i+k*m][j+l*m] != grid[i+k*(m+1)][j+l*(m+1)]) {
                     continue l4;
@@ -61,14 +71,17 @@ public class ConnectFour {
         }
       }
     }
+    // Returns false after checking there's no win
     return false;
   }
 
   // Prints board
-  public static void printBoard(int turns, boolean win) {
+  public static void printBoard(boolean win) {
     StringBuilder board = new StringBuilder();
     if (!win) {
-      board.append((turns + redStart) % 2 == 1 ? "Red" : "Yellow");
+      // Notably % 2 == 1 instead if 0 like everywhere else
+        // It's b/c when red places a piece, it should say it's yellow's turn and vice versa
+      board.append((turns + redStart) % 2 == 0 ? "Red" : "Yellow");
       board.append("\'s Turn:\n");
     }
     for (int i = 3; i < 9; i++) {
@@ -123,11 +136,11 @@ public class ConnectFour {
         while (!move.matches("-?\\d+") || Integer.parseInt(move) < 1 || Integer.parseInt(move) > 7) {
           move = scan.nextLine().toLowerCase();
         }
-        result = playGame(move, turns);
+        result = playTurn(move);
         if (!result.equals("none")) {
           break;
         }
-        if (!putPiece(grid, move.substring(0, 1), turns, false)) {
+        if (!putPiece(grid, Integer.parseIntmove, false)) {
           turns++;
         }
       }
