@@ -79,8 +79,6 @@ public class ConnectFour {
   public static void printBoard(boolean win) {
     StringBuilder board = new StringBuilder();
     if (!(win || turns == 42)) {
-      // Notably % 2 == 1 instead if 0 like everywhere else
-        // It's b/c when red places a piece, it should say it's yellow's turn and vice versa
       board.append((turns + redStart) % 2 == 0 ? "Red" : "Yellow");
       board.append("\'s Turn:\n");
     }
