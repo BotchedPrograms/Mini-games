@@ -134,11 +134,11 @@ public class ConnectFour {
         while (!move.matches("-?\\d+") || Integer.parseInt(move) < 1 || Integer.parseInt(move) > 7) {
           move = scan.nextLine().toLowerCase();
         }
-        result = playTurn(move);
+        result = playTurn(Integer.parseInt(move));
         if (!result.equals("none")) {
           break;
         }
-        if (!putPiece(grid, Integer.parseIntmove, false)) {
+        if (!putPiece(grid, Integer.parseInt(move), false)) {
           turns++;
         }
       }
