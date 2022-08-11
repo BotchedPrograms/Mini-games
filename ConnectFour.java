@@ -128,6 +128,7 @@ public class ConnectFour {
       // Plays move
       System.out.print("Enter move (number from 1 to 7 inclusive): ");
       String result = "";
+      turns = 0;
       int turns = 0;
       while (turns < 42) {
         move = "";
