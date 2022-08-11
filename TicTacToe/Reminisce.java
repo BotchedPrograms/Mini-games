@@ -310,8 +310,8 @@ public class Reminisce {
     // Tested it up to 2048 games, and it works fine
       // Tested ConnectFour bot up to 256 games, and that worked fine too
       // Seeing a ConnectFour bot in action is left as an exercise to the reader
-    Reminisce RemiX = new Reminisce(".\\TicTacToe\\src\\memoryX.txt", true);
-    Reminisce RemiO = new Reminisce(".\\TicTacToe\\src\\memoryO.txt", false);
+    Reminisce RemiX = new Reminisce("memoryX.txt", true);
+    Reminisce RemiO = new Reminisce("memoryO.txt", false);
     RemiX.clear();
     RemiO.clear();
   }
