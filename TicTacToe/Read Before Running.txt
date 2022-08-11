@@ -1,0 +1,3 @@
+These programs are all cool and stuff, but the main one is TicTacToe.java where one gets to see artificial intelligence in-action.
+I prepared memoryX.txt and memoryO.txt, but there's a decent chance that TicTacToe.java won't use that.
+In that case, just run Reminisce.java beforehand, and it should be fine.
