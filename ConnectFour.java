@@ -5,12 +5,11 @@ public class ConnectFour {
   public static int[][] grid;
   public static int redStart;
   public static int turns;
+  public static boolean putPiece;
 
   // Plays match
   public static String playTurn(int move) {
-    if (putPiece(grid, move, true)) {
-      turns++;
-    }
+    putPiece(grid, move);
     boolean win = win(grid);
     printBoard(win);
     if (win) {
@@ -23,9 +22,9 @@ public class ConnectFour {
   }
 
   // Puts piece down
-  public static boolean putPiece(int[][] grid, int column, boolean place) {
+  public static void putPiece(int[][] grid, int column) {
     column += 2;
-    boolean putPiece = false;
+    putPiece = false;
     int i;
     for (i = 8; i > 2; i--) {
       if (grid[i][column] == 0) {
@@ -35,10 +34,10 @@ public class ConnectFour {
     if (grid[3][column] == 0) {
       putPiece = true;
     }
-    if (place) {
+    if (putPiece) {
       grid[i][column] = (turns + redStart) % 2 == 0 ? 1 : 2;
+      turns++;
     }
-    return putPiece;
   }
 
   // Checks if anyone has won the game yet
@@ -55,7 +54,7 @@ public class ConnectFour {
           for (int k = -1; k < 2; k++) {
             l4: for (int l = -1; l < 2; l++) {
               // Two loops above both go through each 8 adjacent neighbors
-              // If statement below ensures checking neighbors and not itself
+              // If statement below ensures it checks its neighbors and not itself
               if (!(k == 0 && l == 0)) {
                 // Stuff below checks if the 4 tiles in certain direction are the same
                   // Restarts previous loop if not, returns true if so
@@ -80,20 +79,14 @@ public class ConnectFour {
     StringBuilder board = new StringBuilder();
     if (!(win || turns == 42)) {
       board.append((turns + redStart) % 2 == 0 ? "Red" : "Yellow");
-      board.append("\'s Turn:\n");
+      board.append("'s Turn:\n");
     }
     for (int i = 3; i < 9; i++) {
       for (int j = 3; j < 10; j++) {
         switch (grid[i][j]) {
-          case 0:
-            board.append(". ");
-            break;
-          case 1:
-            board.append("R ");
-            break;
-          case 2:
-            board.append("Y ");
-            break;
+          case 0 -> board.append(". ");
+          case 1 -> board.append("R ");
+          case 2 -> board.append("Y ");
         }
       }
       board.append("\n");
@@ -129,7 +122,6 @@ public class ConnectFour {
       System.out.print("Enter move (number from 1 to 7 inclusive): ");
       String result = "";
       turns = 0;
-      int turns = 0;
       while (turns < 42) {
         move = "";
         while (!move.matches("-?\\d+") || Integer.parseInt(move) < 1 || Integer.parseInt(move) > 7) {
@@ -139,22 +131,13 @@ public class ConnectFour {
         if (!result.equals("none")) {
           break;
         }
-        if (!putPiece(grid, Integer.parseInt(move), false)) {
-          turns++;
-        }
       }
 
       // Prints win or draw
       switch (result) {
-        case "Red":
-          System.out.println("Red wins!");
-          break;
-        case "Yellow":
-          System.out.println("Yellow wins!");
-          break;
-        case "Draw":
-          System.out.println("Draw");
-          break;
+        case "Red" -> System.out.println("Red wins!");
+        case "Yellow" -> System.out.println("Yellow wins!");
+        case "Draw" -> System.out.println("Draw");
       }
 
       // Asks for retry
