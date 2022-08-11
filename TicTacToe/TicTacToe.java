@@ -111,7 +111,7 @@ public class TicTacToe {
     while (retry.equals("y") || retry.equals("yes")) {
       grid = new int[3][3];
       int move;
-      System.out.println("X or O first?: ");
+      System.out.print("X or O first?: ");
       input = "";
       while (!(input.equals("x") || input.equals("o"))) {
         input = scan.nextLine().toLowerCase();
@@ -148,7 +148,7 @@ public class TicTacToe {
       }
 
       retry = "";
-      System.out.println("Retry? (yes or no): ");
+      System.out.print("Retry? (yes or no): ");
       while (!(retry.equals("y") || retry.equals("yes") || retry.equals("n") || retry.equals("no"))) {
         retry = scan.nextLine().toLowerCase();
       }
@@ -177,8 +177,8 @@ public class TicTacToe {
   public static void playGame(int times) throws IOException {
     Scanner scan = new Scanner(System.in);
 
-    Reminisce RemiX = new Reminisce(".\\TicTacToe\\src\\memoryX.txt", true);
-    Reminisce RemiO = new Reminisce(".\\TicTacToe\\src\\memoryO.txt", false);
+    Reminisce RemiX = new Reminisce("memoryX.txt", true);
+    Reminisce RemiO = new Reminisce("memoryO.txt", false);
     int count = 0;
     char result;
     StringBuilder game;
@@ -233,8 +233,8 @@ public class TicTacToe {
   public static void playGame(boolean x, int times) throws IOException {
     Scanner scan = new Scanner(System.in);
 
-    Reminisce RemiX = new Reminisce(".\\TicTacToe\\src\\memoryX.txt", true);
-    Reminisce RemiO = new Reminisce(".\\TicTacToe\\src\\memoryO.txt", false);
+    Reminisce RemiX = new Reminisce("memoryX.txt", true);
+    Reminisce RemiO = new Reminisce("memoryO.txt", false);
     int count = 0;
     char result;
     StringBuilder game;
