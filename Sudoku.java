@@ -499,8 +499,7 @@ public class Sudoku {
         }
         return true;
     }
-
-    //
+    
     public static boolean verifyAnswer(int[][] original, int[][] answer) {
         return verifyAnswer(original, answer, true);
     }
@@ -685,6 +684,7 @@ public class Sudoku {
         int result = newSudoku.solveHard();
         newSudoku = new Sudoku(initial, initial);
         if (result == 0) {
+            // IllegalArgumentExceptions just indicating that something terribly wrong has happened
             throw new IllegalArgumentException();
         }
         if (result == 1) {
@@ -872,7 +872,7 @@ public class Sudoku {
             {0, 0, 0, 0, 0, 0, 1, 5, 0},
             {5, 0, 0, 0, 3, 0, 9, 0, 0}
         };
-        // Takes a really long time to confirm it has no solutions, a problem in general
+        // takes a really long time to confirm it has no solutions, a problem in general
         int[][] anomaly = new int[][] {
             {0, 9, 0, 0, 0, 0, 0, 0, 0},
             {7, 0, 0, 0, 0, 4, 0, 0, 1},
@@ -884,6 +884,12 @@ public class Sudoku {
             {0, 0, 1, 4, 0, 0, 0, 0, 0},
             {5, 0, 0, 1, 0, 0, 0, 0, 0}
         };
+        Sudoku sudoku = new Sudoku(medium);
+        int[][] answer = sudoku.solve();
+        print(answer);
+        System.out.println();
+        System.out.println();
+
         int[][] genEasy = generateEasy();
         System.out.println("Easy");
         print(genEasy);
