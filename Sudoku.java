@@ -228,7 +228,7 @@ public class Sudoku {
         return changed;
     }
 
-    // consider the row 0 0 1 2 3 4 5 6 7. you don't know which 0 is 8 or 9, but you know that 8 or 9 are both there
+    // consider the row 0 0 1 2 3 4 5 6 7. we don't know which 0 is 8 or 9, but we know that 8 or 9 are both there
     // the box that contains both 0s thus can't have an 8 or 9 outside that intersection
     // this handles that logic by checking every intersection
     private boolean checkCap() {
@@ -238,6 +238,146 @@ public class Sudoku {
             for (int j = 0; j < 9; j += 3) {
                 for (int k = 0; k < 3; k++) {
                     changed = checkCap(i + k, j + k) || changed;
+                }
+            }
+        }
+        return changed;
+    }
+
+    // consider a box that has two spaces where the only possible numbers for both of them are 1 and 2
+    // we don't know which is the 1 or 2, but we know one of them is the 1 and the other is the 2
+    // it follows that no other space in the bok has a 1 or 2
+    // this handles that logic, but with box generalized to work for row and column
+    private boolean checkTwoBound(Set<Integer> vals) {
+        List<Integer> possTwoBound = new LinkedList<>();
+        for (int val : vals) {
+            if (possGrid.get(val).size() == 2) {
+                possTwoBound.add(val);
+            }
+        }
+        boolean changed = false;
+        for (int i = 0; i < possTwoBound.size() - 1; i++) {
+            for (int j = i + 1; j < possTwoBound.size(); j++) {
+                int boundI = possTwoBound.get(i);
+                int boundJ = possTwoBound.get(j);
+                if (!possGrid.get(boundI).equals(possGrid.get(boundJ))) {
+                    continue;
+                }
+                for (int val : vals) {
+                    if (val != boundI && val != boundJ) {
+                        changed = possGrid.get(val).removeAll(possGrid.get(boundI)) || changed;
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    // consider a box with 3 spaces whose only possibles values are 1,2; 1,2,3; and 1,3
+    // we don't know which number goes where, between them, one of them is 1, another 2, and the other 3
+    // it follows that no other space in the box has a 1,2, or 3
+    // this handles that logic, but with box generalized to row and column
+    private boolean checkThreeBound(Set<Integer> vals) {
+        List<Integer> possThreeBound = new LinkedList<>();
+        for (int val : vals) {
+            if (possGrid.get(val).size() >= 2 && possGrid.get(val).size() <= 3) {
+                possThreeBound.add(val);
+            }
+        }
+        boolean changed = false;
+        for (int i = 0; i < possThreeBound.size() - 2; i++) {
+            for (int j = i + 1; j < possThreeBound.size() - 1; j++) {
+                for (int k = j + 1; k < possThreeBound.size(); k++) {
+                    Set<Integer> threeBound = new HashSet<>();
+                    int boundI = possThreeBound.get(i);
+                    int boundJ = possThreeBound.get(j);
+                    int boundK = possThreeBound.get(k);
+                    threeBound.addAll(possGrid.get(boundI));
+                    threeBound.addAll(possGrid.get(boundJ));
+                    threeBound.addAll(possGrid.get(boundK));
+                    if (threeBound.size() != 3) {
+                        continue;
+                    }
+                    for (int val : vals) {
+                        if (val != boundI && val != boundJ && val != boundK) {
+                            changed = possGrid.get(val).removeAll(threeBound) || changed;
+                        }
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    // the same logic as checkThreeBound but with four spaces instead of three
+    // checkTwoBound and checkThreeBound is enough to solve most hard sudokus, this is just in case
+    private boolean checkFourBound(Set<Integer> vals) {
+        List<Integer> possFourBound = new LinkedList<>();
+        for (int val : vals) {
+            if (possGrid.get(val).size() >= 2 && possGrid.get(val).size() <= 4) {
+                possFourBound.add(val);
+            }
+        }
+        boolean changed = false;
+        for (int i = 0; i < possFourBound.size() - 3; i++) {
+            for (int j = i + 1; j < possFourBound.size() - 2; j++) {
+                for (int k = j + 1; k < possFourBound.size() - 1; k++) {
+                    for (int l = k + 1; l < possFourBound.size(); l++) {
+                        Set<Integer> fourBound = new HashSet<>();
+                        int boundI = possFourBound.get(i);
+                        int boundJ = possFourBound.get(j);
+                        int boundK = possFourBound.get(k);
+                        int boundL = possFourBound.get(l);
+                        fourBound.addAll(possGrid.get(boundI));
+                        fourBound.addAll(possGrid.get(boundJ));
+                        fourBound.addAll(possGrid.get(boundK));
+                        fourBound.addAll(possGrid.get(boundL));
+                        if (fourBound.size() != 4) {
+                            continue;
+                        }
+                        for (int val : vals) {
+                            if (val != boundI && val != boundJ && val != boundK && val != boundL) {
+                                changed = possGrid.get(val).removeAll(fourBound) || changed;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    // does checkTwoBound, checkThreeBound, checkFourBound on vals
+    private boolean checkBound(Set<Integer> vals) {
+        if (checkTwoBound(vals)) {
+            return true;
+        }
+        if (checkThreeBound(vals)) {
+            return true;
+        }
+        // only called if the other checkBounds don't find anything to save time. same holds for checkThreeBound ofc
+        return checkFourBound(vals);
+    }
+
+    // does checkBound for the row, column, and box containing the current row and column
+    private boolean checkBound(int row, int col) {
+        Set<Integer> rowVals = getRowNeighbors(row);
+        Set<Integer> colVals = getColNeighbors(col);
+        Set<Integer> boxVals = getBoxNeighbors(row, col);
+        boolean changed = checkBound(rowVals);
+        changed = checkBound(colVals) || changed;
+        changed = checkBound(boxVals) || changed;
+        return changed;
+    }
+
+    // does checkBound on each row, column, and box in the grid
+    private boolean checkBound() {
+        // hard coded indices [i+k][j+k] which uniquely cover every intersection between a row/column and box
+        boolean changed = false;
+        for (int i = 0; i < 9; i += 3) {
+            for (int j = 0; j < 9; j += 3) {
+                for (int k = 0; k < 3; k++) {
+                    changed = checkBound(i + k, j + k) || changed;
                 }
             }
         }
@@ -263,7 +403,7 @@ public class Sudoku {
         for (int poss : possGrid.get(minSizeVal)) {
             grid[minSizeVal / 9][minSizeVal % 9] = poss;
             Sudoku guess = new Sudoku(grid);
-            int result = guess.solveHard();
+            int result = guess.solveVeryHard();
             grid[minSizeVal / 9][minSizeVal % 9] = 0;
             if (result == 0) {
                 continue;
@@ -354,10 +494,46 @@ public class Sudoku {
         return 1;
     }
 
-    // solves using checkOnes, checkOnlys, checkCaps, and guesses (everything)
-    // returns 0 if no sol, 1 if unique sol, 2 if multiple sols
+    // should solve just about every sudoku that has a solution
+    // solves using checkOnes, checkOnlys, checkCaps, and checkBound. used to determine difficulty
+    // returns 0 if no sol, 1 if unique sol, -1 if undetermined
     private int solveHard() {
-        int result = solveMedium();
+        for (int val = 0; val < 81; val++) {
+            if (grid[val / 9][val % 9] != 0) {
+                updatePossGrid(val);
+            }
+        }
+        boolean filledOut;
+        while (true) {
+            boolean added = false;
+            filledOut = true;
+            for (int val = 0; val < 81; val++) {
+                if (grid[val / 9][val % 9] != 0) {
+                    continue;
+                }
+                if (possGrid.get(val).isEmpty()) {
+                    return 0;
+                }
+                added = check(val) || added;
+                filledOut = false;
+            }
+            if (filledOut) {
+                break;
+            }
+            if (!added && !checkCap() && !checkBound()) {
+                break;
+            }
+        }
+        if (!filledOut) {
+            return -1;
+        }
+        return 1;
+    }
+
+    // solves using checkOnes, checkOnlys, checkCaps, checkBounds, and guessing (everything)
+    // returns 0 if no sol, 1 if unique sol, 2 if multiple sols
+    private int solveVeryHard() {
+        int result = solveHard();
         if (result != -1) {
             return result;
         }
@@ -373,7 +549,7 @@ public class Sudoku {
 
     // solves, returns solution, conditionally prints solvability
     private int[][] solve(boolean print) {
-        int result = solveHard();
+        int result = solveVeryHard();
         if (print) {
             if (result == 0) {
                 System.out.println("No solutions");
@@ -422,6 +598,7 @@ public class Sudoku {
         }
         return true;
     }
+
     private static boolean validateSize(int[][] grid) {
         return validateSize(grid, true);
     }
@@ -499,7 +676,7 @@ public class Sudoku {
         }
         return true;
     }
-    
+
     public static boolean verifyAnswer(int[][] original, int[][] answer) {
         return verifyAnswer(original, answer, true);
     }
@@ -575,9 +752,9 @@ public class Sudoku {
         return 0;
     }
 
-    // solveHard but calls modifiedGuess instead of guess. used in modifiedGuess
+    // solveVeryHard but calls modifiedGuess instead of guess. used in modifiedGuess
     private int modifiedSolve() {
-        int result = solveMedium();
+        int result = solveHard();
         if (result != -1) {
             return result;
         }
@@ -672,28 +849,31 @@ public class Sudoku {
     private static int[][] generate() {
         int[][] initial = new int[9][9];
         Random rand = new Random();
-        // fills initial 5 times with a number that keeps initial valid
-        for (int i = 0; i < 5; i++) {
-            int randVal = rand.nextInt(81);
-            initial[randVal / 9][randVal % 9] = rand.nextInt(9) + 1;
-            if (!validateGrid(initial, false)) {
-                initial[randVal / 9][randVal % 9] = 0;
+        Sudoku newSudoku;
+        // shouldn't loop but just in case does
+        while (true) {
+            // fills initial 8 times with a number that keeps initial valid and has at least 1 solution
+            for (int i = 0; i < 8; i++) {
+                int randVal = rand.nextInt(81);
+                initial[randVal / 9][randVal % 9] = rand.nextInt(9) + 1;
+                if (!validateGrid(initial, false)) {
+                    initial[randVal / 9][randVal % 9] = 0;
+                }
             }
-        }
-        Sudoku newSudoku = new Sudoku(initial, initial);
-        int result = newSudoku.solveHard();
-        newSudoku = new Sudoku(initial, initial);
-        if (result == 0) {
-            // IllegalArgumentExceptions just indicating that something terribly wrong has happened
-            throw new IllegalArgumentException();
-        }
-        if (result == 1) {
-            throw new IllegalArgumentException();
+            newSudoku = new Sudoku(initial, initial);
+            // solveHard instead of solveVeryHard since faster
+            // and sudokus that only solveVeryHard can solve wouldn't be very fun to play anyways
+            int result = newSudoku.solveHard();
+            newSudoku = new Sudoku(initial, initial);
+            if (result == 0 || result == 1) {
+                continue;
+            }
+            break;
         }
         newSudoku.modifiedSolve();
         // newSudoku now has a unique solution but likely has a lot of redundant numbers filled
         // following loop removes some of those redundant numbers
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 40; i++) {
             List<Integer> filledVals = new LinkedList<>();
             for (int val = 0; val < 81; val++) {
                 if (newSudoku.gridCopy[val / 9][val % 9] != 0) {
@@ -706,7 +886,7 @@ public class Sudoku {
                 int sub = newSudoku.gridCopy[randVal / 9][randVal % 9];
                 newSudoku.gridCopy[randVal / 9][randVal % 9] = 0;
                 Sudoku newerSudoku = new Sudoku(newSudoku.gridCopy);
-                result = newerSudoku.solveHard();
+                int result = newerSudoku.solveHard();
                 if (result == 0) {
                     throw new IllegalArgumentException();
                 }
@@ -714,7 +894,7 @@ public class Sudoku {
                     changed = true;
                     break;
                 }
-                if (result == 2) {
+                if (result == -1) {
                     newSudoku.gridCopy[randVal / 9][randVal % 9] = sub;
                 }
             }
@@ -759,9 +939,11 @@ public class Sudoku {
     // generates a hard sudoku
     public static int[][] generateHard() {
         int[][] generated;
+        int difficulty;
         do {
             generated = generate();
-        } while (new Sudoku(generated).difficulty() != 3);
+            difficulty = new Sudoku(generated).difficulty();
+        } while (difficulty != 3);
         return generated;
     }
 
@@ -884,6 +1066,27 @@ public class Sudoku {
             {0, 0, 1, 4, 0, 0, 0, 0, 0},
             {5, 0, 0, 1, 0, 0, 0, 0, 0}
         };
+        /*long s1 = System.currentTimeMillis();
+        print(new Sudoku(anomaly).solve());
+        long s2 = System.currentTimeMillis();
+        System.out.println(s2 - s1);*/
+
+        int[][] bs = new int[][] {
+            {8, 6, 0, 7, 4, 0, 0, 3, 5},
+            {7, 0, 0, 0, 0, 6, 4, 0, 8},
+            {1, 2, 4, 8, 5, 3, 9, 7, 6},
+            {3, 4, 0, 6, 7, 5, 0, 0, 9},
+            {5, 0, 0, 4, 0, 0, 6, 0, 3},
+            {6, 0, 0, 0, 3, 8, 5, 4, 7},
+            {9, 5, 1, 2, 8, 7, 3, 6, 4},
+            {2, 0, 0, 5, 6, 4, 8, 9, 1},
+            {4, 8, 6, 3, 9, 1, 7, 5, 2}
+        };
+        Sudoku bsS = new Sudoku(bs);
+        bsS.solveEasy();
+        bsS.printGrid();
+
+
         Sudoku sudoku = new Sudoku(medium);
         int[][] answer = sudoku.solve();
         print(answer);
